@@ -410,7 +410,7 @@ void TDM_BeginMatch (void)
 	edict_t		*ent;
 
 	//level.match_start_framenum = 0;
-	level.match_end_framenum = level.framenum + (int)(g_match_time->value * SERVER_FPS);
+	level.match_end_framenum = level.framenum + SECS_TO_FRAMES(g_match_time->value);
 	tdm_match_status = MM_PLAYING;
 
 	//must setup teamplayers before level, or we lose item spawn stats
@@ -1066,7 +1066,7 @@ void TDM_BeginCountdown (void)
 	//called to apply a temporary hack for people who do 1v1 on tdm mode
 	TDM_UpdateTeamNames ();
 	
-	level.match_start_framenum = level.framenum + (int)(g_match_countdown->value * SERVER_FPS);
+	level.match_start_framenum = level.framenum + SECS_TO_FRAMES(g_match_countdown->value);
 
 	// wision: force players to record
 	for (client = g_edicts + 1; client <= g_edicts + game.maxclients; client++)
@@ -1443,7 +1443,7 @@ void TDM_CheckTimes (void)
 
 		remaining = level.match_start_framenum - level.framenum;
 
-		if (remaining == (int)(10.4f * SERVER_FPS))
+		if (remaining == SECS_TO_FRAMES(10.4f))
 		{
 			gi.sound (world, 0, gi.soundindex ("world/10_0.wav"), 1, ATTN_NONE, 0);
 		}
@@ -1493,7 +1493,7 @@ void TDM_CheckTimes (void)
 		{
 			remaining = level.match_end_framenum - level.framenum;
 
-			if (remaining == (int)(10.4f * SERVER_FPS))
+			if (remaining == SECS_TO_FRAMES(10.4f))
 			{
 				gi.sound (world, 0, gi.soundindex ("world/10_0.wav"), 1, ATTN_NONE, 0);
 			}
@@ -2907,7 +2907,7 @@ void TDM_UpdateConfigStrings (qboolean forceUpdate)
 			break;
 		case MM_WARMUP:
 			timeout_remaining = 0;
-			time_remaining = g_match_time->value * (1 * SERVER_FPS) - 1;
+			time_remaining = SECS_TO_FRAMES(g_match_time->value) - 1;
 			break;
 		case MM_SUDDEN_DEATH:
 			timeout_remaining = 0;

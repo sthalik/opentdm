@@ -395,7 +395,7 @@ void CheckDMRules (void)
 
 	if (timelimit->value)
 	{
-		if (level.time >= timelimit->value * 600)
+		if (level.framenum >= SECS_TO_FRAMES(timelimit->value * 600))
 		{
 			gi.bprintf (PRINT_HIGH, "Timelimit hit.\n");
 			EndDMLevel ();
@@ -478,7 +478,6 @@ void G_RunFrame (void)
 	if (tdm_match_status != MM_TIMEOUT)
 	{
 		//level.framenum++;
-		//level.time = level.framenum;// * FRAMETIME;
 
 		// exit intermissions
 
@@ -545,6 +544,5 @@ void G_RunFrame (void)
 	if (tdm_match_status != MM_TIMEOUT)
 	{
 		level.framenum++;
-		level.time = level.framenum;// * FRAMETIME;
 	}
 }

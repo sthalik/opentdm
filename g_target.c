@@ -182,7 +182,7 @@ void use_target_explosion (edict_t *self, edict_t *other, edict_t *activator)
 	}
 
 	self->think = target_explosion_explode;
-	self->nextthink = level.time + self->delay * (1 * SERVER_FPS);
+	self->nextthink = level.framenum + SECS_TO_FRAMES(self->delay);
 }
 
 void SP_target_explosion (edict_t *ent)
@@ -403,7 +403,7 @@ void SP_target_crosslevel_target (edict_t *self)
 	self->svflags = SVF_NOCLIENT;
 
 	self->think = target_crosslevel_target_think;
-	self->nextthink = level.time + self->delay * (1 * SERVER_FPS);
+	self->nextthink = level.framenum + SECS_TO_FRAMES(self->delay);
 }
 
 //==========================================================
@@ -475,7 +475,7 @@ void target_laser_think (edict_t *self)
 
 	VectorCopy (tr.endpos, self->s.old_origin);
 
-	self->nextthink = level.time + 1;
+	self->nextthink = level.framenum + SECS_TO_FRAMES(0.1f);
 }
 
 void target_laser_on (edict_t *self)
@@ -564,7 +564,7 @@ void SP_target_laser (edict_t *self)
 {
 	// let everything else get spawned before we start firing
 	self->think = target_laser_start;
-	self->nextthink = level.time + 1 * (1 * SERVER_FPS);
+	self->nextthink = level.framenum + SECS_TO_FRAMES(1);
 }
 
 //==========================================================
@@ -594,10 +594,10 @@ void target_earthquake_think (edict_t *self)
 	int		i;
 	edict_t	*e;
 
-	if (self->last_move_time < level.time)
+	if (self->pain_debounce_framenum < level.framenum)
 	{
 		gi.positioned_sound (self->s.origin, self, CHAN_AUTO, self->noise_index, 1.0, ATTN_NONE, 0);
-		self->last_move_time = level.time + 0.5 * (1 * SERVER_FPS);
+		self->pain_debounce_framenum = level.framenum + SECS_TO_FRAMES(0.5f);
 	}
 
 	for (i=1, e=g_edicts+i; i < globals.num_edicts; i++,e++)
@@ -615,16 +615,16 @@ void target_earthquake_think (edict_t *self)
 		e->velocity[2] = self->speed * (100.0 / e->mass);
 	}
 
-	if (level.time < self->timestamp)
-		self->nextthink = level.time + 1;
+	if (level.framenum < self->damage_debounce_framenum)
+		self->nextthink = level.framenum + SECS_TO_FRAMES(0.1f);
 }
 
 void target_earthquake_use (edict_t *self, edict_t *other, edict_t *activator)
 {
-	self->timestamp = level.time + self->count;
-	self->nextthink = level.time + 1;
+	self->damage_debounce_framenum = level.framenum + SECS_TO_FRAMES(self->count);
+	self->nextthink = level.framenum + SECS_TO_FRAMES(0.1f);
 	self->activator = activator;
-	self->last_move_time = 0;
+	self->pain_debounce_framenum = 0;
 }
 
 void SP_target_earthquake (edict_t *self)

@@ -194,11 +194,8 @@ void PMenu_Select(edict_t *ent);
 //==================================================================
 
 // view pitching times
-#define DAMAGE_TIME		(0.5f * (1 * SERVER_FPS))
-#define	FALL_TIME		(0.3f * (1 * SERVER_FPS))
-
-//#define DAMAGE_TIME		0.5f
-//#define	FALL_TIME		0.3f
+#define	DAMAGE_FRAMES		SECS_TO_FRAMES(0.5f)
+#define	FALL_FRAMES			SECS_TO_FRAMES(0.3f)
 
 // edict->spawnflags
 // these are set with checkboxes on each entity in the map editor
@@ -510,7 +507,6 @@ typedef struct
 typedef struct
 {
 	int			framenum;
-	unsigned	time;
 
 	char		level_name[MAX_QPATH];	// the descriptive name (Outer Base, etc)
 	char		mapname[MAX_QPATH];		// the server name (base1, etc)
@@ -1547,8 +1543,10 @@ struct gclient_s
 	vec3_t		kick_origin_final;
 	unsigned	kick_origin_start;
 	unsigned	kick_origin_end;
-	float		v_dmg_roll, v_dmg_pitch, v_dmg_time;	// damage kicks
-	float		fall_time, fall_value;		// for view drop on fall
+	float		v_dmg_roll, v_dmg_pitch;	// damage kicks
+	int			v_dmg_framenum;
+	float		fall_value;		// for view drop on fall
+	int			fall_framenum;
 	float		damage_alpha;
 	float		bonus_alpha;
 	vec3_t		damage_blend;
@@ -1557,7 +1555,7 @@ struct gclient_s
 	vec3_t		oldviewangles;
 	vec3_t		oldvelocity;
 
-	unsigned	next_drown_time;
+	unsigned	next_drown_framenum;
 	int			old_waterlevel;
 	int			breather_sound;
 
@@ -1576,11 +1574,11 @@ struct gclient_s
 	unsigned	enviro_framenum;
 
 	grenade_state_t	grenade_state;
-	unsigned	grenade_time;
+	unsigned	grenade_framenum;
 	int			silencer_shots;
 	int			weapon_sound;
 
-	unsigned	pickup_msg_time;
+	unsigned	pickup_msg_framenum;
 
 	unsigned	respawn_framenum;	// can respawn when time > this
 
@@ -1666,7 +1664,7 @@ struct edict_s
 	int			flags;
 
 	const char	*model;
-	float		freetime;			// sv.time when the object was freed
+	unsigned	freed_framenum;			// level.framenum when the object was freed
 	
 	//
 	// only used locally in game, not by server
@@ -1695,7 +1693,7 @@ struct edict_s
 	vec3_t		velocity;
 	vec3_t		avelocity;
 	int			mass;
-	unsigned	air_finished;
+	unsigned	air_finished_framenum;
 	float		gravity;		// per entity gravity multiplier (1.0 is normal)
 								// use for lowgrav artifact, flares
 
@@ -1713,11 +1711,10 @@ struct edict_s
 	void		(*pain)(edict_t *self, edict_t *other, float kick, int damage);
 	void		(*die)(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point);
 
-	unsigned	touch_debounce_time;		// are all these legit?  do we need more/less of them?
-	unsigned	pain_debounce_time;
-	unsigned	damage_debounce_time;
-	unsigned	fly_sound_debounce_time;	//move to clientinfo
-	unsigned	last_move_time;
+	unsigned	touch_debounce_framenum;		// are all these legit?  do we need more/less of them?
+	unsigned	pain_debounce_framenum;
+	unsigned	damage_debounce_framenum;
+	unsigned	fly_sound_debounce_framenum;	//move to clientinfo
 
 	int			health;
 	int			max_health;
@@ -1725,7 +1722,7 @@ struct edict_s
 	int			deadflag;
 	qboolean	show_hostile;
 
-	unsigned	powerarmor_time;
+	unsigned	powerarmor_framenum;
 
 	char		*map;			// target_changelevel
 
@@ -1758,8 +1755,6 @@ struct edict_s
 	float		wait;
 	float		delay;			// before firing targets
 	float		random;
-
-	float		teleport_time;
 
 	int			watertype;
 	int			waterlevel;

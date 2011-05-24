@@ -107,7 +107,7 @@ static void TDM_ApplyVote (void)
 		if (tdm_match_status >= MM_PLAYING && tdm_match_status < MM_SCOREBOARD)
 		{
 			current_matchinfo.timelimit = g_match_time->value / 60;
-			level.match_end_framenum = level.match_start_framenum + (int)(g_match_time->value * SERVER_FPS);
+			level.match_end_framenum = level.match_start_framenum + SECS_TO_FRAMES(g_match_time->value);
 
 			//end immediately if timelimit was reduced
 			if (level.match_end_framenum < level.framenum)
@@ -1957,7 +1957,7 @@ A player started a vote, set up common vote stuff.
 void TDM_SetupVote (edict_t *ent)
 {
 	vote.initiator = ent;
-	vote.end_frame = level.framenum + (int)g_vote_time->value * (1 * SERVER_FPS);
+	vote.end_frame = level.framenum + SECS_TO_FRAMES(g_vote_time->value);
 	vote.active = true;
 
 	ent->client->resp.vote = VOTE_YES;
