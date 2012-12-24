@@ -252,6 +252,7 @@ void InitGame (void)
 	g_http_enabled = gi.cvar ("g_http_enabled", "1", 0);
 	g_http_bind = gi.cvar ("g_http_bind", "", 0);
 	g_http_proxy = gi.cvar ("g_http_proxy", "", 0);
+	g_http_debug = gi.cvar ("g_http_debug", "0", 0);
 
 	g_debug_spawns = gi.cvar ("g_debug_spawns", "0", 0);
 

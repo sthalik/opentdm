@@ -281,9 +281,19 @@ void HTTP_StartDownload (dlhandle_t *dl)
 
 	curl_easy_setopt (dl->curl, CURLOPT_HTTPHEADER, http_header_slist);	
 	curl_easy_setopt (dl->curl, CURLOPT_ENCODING, "");
-	curl_easy_setopt (dl->curl, CURLOPT_DEBUGFUNCTION, CURL_Debug);
-	curl_easy_setopt (dl->curl, CURLOPT_VERBOSE, 1);
-	curl_easy_setopt (dl->curl, CURLOPT_NOPROGRESS, 0);
+
+	if (g_http_debug->value)
+	{
+		curl_easy_setopt (dl->curl, CURLOPT_DEBUGFUNCTION, CURL_Debug);
+		curl_easy_setopt (dl->curl, CURLOPT_VERBOSE, 1);
+	}
+	else
+	{
+		curl_easy_setopt (dl->curl, CURLOPT_DEBUGFUNCTION, NULL);
+		curl_easy_setopt (dl->curl, CURLOPT_VERBOSE, 0);
+	}
+
+	curl_easy_setopt (dl->curl, CURLOPT_NOPROGRESS, 1);
 	curl_easy_setopt (dl->curl, CURLOPT_WRITEDATA, dl);
 	if (g_http_bind->string[0])
 		curl_easy_setopt (dl->curl, CURLOPT_INTERFACE, g_http_bind->string);
@@ -300,7 +310,6 @@ void HTTP_StartDownload (dlhandle_t *dl)
 	curl_easy_setopt (dl->curl, CURLOPT_MAXREDIRS, 5);
 	curl_easy_setopt (dl->curl, CURLOPT_WRITEHEADER, dl);
 	curl_easy_setopt (dl->curl, CURLOPT_HEADERFUNCTION, HTTP_Header);
-	curl_easy_setopt (dl->curl, CURLOPT_PROGRESSDATA, dl);
 	curl_easy_setopt (dl->curl, CURLOPT_USERAGENT, "OpenTDM (" OPENTDM_VERSION ")");
 	curl_easy_setopt (dl->curl, CURLOPT_REFERER, hostname->string);
 	curl_easy_setopt (dl->curl, CURLOPT_URL, dl->URL);
