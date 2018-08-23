@@ -1834,7 +1834,7 @@ void TDM_UpdateTeamNames (void)
 		{
 			if (strcmp (teaminfo[TEAM_A].name, teaminfo[TEAM_A].captain->client->pers.netname))
 			{
-				strncpy (teaminfo[TEAM_A].name, teaminfo[TEAM_A].captain->client->pers.netname, sizeof(teaminfo[TEAM_A].name)-1);
+				strcpy (teaminfo[TEAM_A].name, teaminfo[TEAM_A].captain->client->pers.netname);
 				g_team_a_name->modified = true;
 			}
 		}
@@ -1851,7 +1851,7 @@ void TDM_UpdateTeamNames (void)
 		{
 			if (strcmp (teaminfo[TEAM_B].name, teaminfo[TEAM_B].captain->client->pers.netname))
 			{
-				strncpy (teaminfo[TEAM_B].name, teaminfo[TEAM_B].captain->client->pers.netname, sizeof(teaminfo[TEAM_B].name)-1);
+				strcpy (teaminfo[TEAM_B].name, teaminfo[TEAM_B].captain->client->pers.netname);
 				g_team_b_name->modified = true;
 			}
 		}
@@ -1878,13 +1878,13 @@ void TDM_UpdateTeamNames (void)
 			{
 				if (strcmp (teaminfo[TEAM_A].name, p1->client->pers.netname))
 				{
-					strncpy (teaminfo[TEAM_A].name, p1->client->pers.netname, sizeof(teaminfo[TEAM_A].name)-1);
+					strcpy (teaminfo[TEAM_A].name, p1->client->pers.netname);
 					g_team_a_name->modified = true;
 				}
 
 				if (strcmp (teaminfo[TEAM_B].name, p2->client->pers.netname))
 				{
-					strncpy (teaminfo[TEAM_B].name, p2->client->pers.netname, sizeof(teaminfo[TEAM_B].name)-1);
+					strcpy (teaminfo[TEAM_B].name, p2->client->pers.netname);
 					g_team_b_name->modified = true;
 				}
 			}
@@ -2251,7 +2251,7 @@ qboolean TDM_CheckMapExists (const char *mapname)
 	if (gamedir)
 	{
 		// check gamedir
-		snprintf (buffer, sizeof(buffer), "%s/maps/%s.bsp", gamedir->string, mapname);
+		snprintf (buffer, sizeof(buffer)-1, "%s/maps/%s.bsp", gamedir->string, mapname);
 		mf = fopen (buffer, "r");
 		if (mf == NULL)
 			return false;
@@ -2917,7 +2917,7 @@ void TDM_UpdateConfigStrings (qboolean forceUpdate)
 	if (time_remaining != last_time_remaining || forceUpdate)
 	{
 		static int	last_secs = -1;
-		char		time_buffer[8];
+		char		time_buffer[32];
 		int			mins, secs;
 
 		last_time_remaining = time_remaining;
@@ -2953,7 +2953,7 @@ void TDM_UpdateConfigStrings (qboolean forceUpdate)
 	if (timeout_remaining != last_timeout_remaining)
 	{
 		static int	last_secs = -1;
-		char		time_buffer[8];
+		char		time_buffer[32];
 		int			mins, secs;
 
 		last_timeout_remaining = timeout_remaining;

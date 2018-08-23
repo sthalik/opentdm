@@ -378,7 +378,7 @@ const char *ED_ParseEdict (const char *data, edict_t *ent)
 		if (!data)
 			gi.error ("ED_ParseEntity: EOF without closing brace");
 
-		strncpy (keyname, com_token, sizeof(keyname)-1);
+		Q_strncpy (keyname, com_token, sizeof(keyname)-1);
 		
 	// parse value	
 		com_token = COM_Parse (&data);
@@ -823,17 +823,17 @@ void SP_worldspawn (edict_t *ent)
 	SetItemNames ();
 
 	if (st.nextmap)
-		strcpy (level.nextmap, st.nextmap);
+		strncpy (level.nextmap, st.nextmap, sizeof(level.nextmap)-1);
 
 	// make some data visible to the server
 
 	if (ent->message && ent->message[0])
 	{
 		gi.configstring (CS_NAME, ent->message);
-		strncpy (level.level_name, ent->message, sizeof(level.level_name));
+		strncpy (level.level_name, ent->message, sizeof(level.level_name)-1);
 	}
 	else
-		strncpy (level.level_name, level.mapname, sizeof(level.level_name));
+		strcpy (level.level_name, level.mapname);
 
 	if (st.sky && st.sky[0])
 		gi.configstring (CS_SKY, st.sky);
